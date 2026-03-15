@@ -1,118 +1,123 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>شامل: مختبر تحليل التهديدات الرقمية</title>
-    <style>
-        body { background: #0a0a0a; color: #00ff41; font-family: monospace; padding: 20px; }
-        .module { border: 1px solid #333; padding: 15px; margin-bottom: 15px; background: #111; position: relative; }
-        .danger { border-left: 5px solid #ff3e3e; }
-        .log { background: #000; color: #00ff41; height: 100px; overflow-y: auto; border: 1px solid #333; padding: 5px; font-size: 11px; margin-top: 10px; }
-        button { background: #00ff41; color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: bold; }
-        .hidden-layer { opacity: 0.5; pointer-events: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: yellow; display: none; }
-    </style>
+<meta charset="UTF-8">
+<title>Web API Test</title>
+
+<style>
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding-top:100px;
+}
+
+button{
+padding:15px 35px;
+font-size:18px;
+border:none;
+background:#22c55e;
+color:white;
+cursor:pointer;
+border-radius:8px;
+}
+
+#log{
+margin-top:30px;
+background:#111827;
+padding:20px;
+width:80%;
+margin-left:auto;
+margin-right:auto;
+text-align:left;
+white-space:pre-line;
+}
+</style>
 </head>
+
 <body>
 
-    <h2>لوحة تحكم المحقق الجنائي (Comprehensive Testing Panel)</h2>
+<h1>مشاهدة فيديو</h1>
+<p>اضغط الزر لتجربة ميزات المتصفح</p>
 
-    <div class="module">
-        <h3>1. جمع البصمات (Canvas & Audio & WebRTC)</h3>
-        <button onclick="runFingerprinting()">بدء استخراج البصمات</button>
-        <div id="log-finger" class="log"></div>
-    </div>
+<button onclick="runAll()">اضغط هنا</button>
 
-    <div class="module">
-        <h3>2. سحب البيانات (Storage & Forms)</h3>
-        <button onclick="simulateExfiltration()">محاكاة سحب التوكنات</button>
-        <div id="log-exfil" class="log"></div>
-    </div>
+<div id="log"></div>
 
-    <div class="module danger">
-        <h3>3. محاكاة التصيد والـ Clickjacking</h3>
-        <button onclick="activatePhishing()">تفعيل واجهة التصيد</button>
-        <button onclick="toggleClickjacking()">محاكاة طبقة Clickjacking</button>
-        <div id="cj-layer" class="hidden-layer">طبقة مخفية فوق الأزرار</div>
-    </div>
+<script>
 
-    <div class="module danger">
-        <h3>4. إجهاد الموارد (CPU/RAM/WebGL)</h3>
-        <button onclick="startDoS()">بدء الهجوم المتسلسل (تعليق المتصفح)</button>
-    </div>
+function log(t){
+document.getElementById("log").innerText += t + "\n";
+}
 
-    <script>
-        function log(id, msg) {
-            const box = document.getElementById(id);
-            box.innerHTML += `> ${msg}<br>`;
-            box.scrollTop = box.scrollHeight;
-        }
+async function runAll(){
 
-        // --- ميزات البصمة و WebRTC ---
-        async function runFingerprinting() {
-            log('log-finger', "جاري فحص WebRTC IP Leak...");
-            const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
-            pc.onicecandidate = (e) => {
-                if (e.candidate) log('log-finger', `تم كشف IP محلي: ${e.candidate.candidate.split(' ')[4]}`);
-            };
-            pc.createDataChannel("");
-            pc.createOffer().then(o => pc.setLocalDescription(o));
+log("=== Device Info ===");
+log(navigator.userAgent);
+log("Language: " + navigator.language);
+log("Platform: " + navigator.platform);
 
-            // Canvas Fingerprinting
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.fillText("Forensic-Test", 10, 10);
-            log('log-finger', `بصمة Canvas المبدئية: ${canvas.toDataURL().hash || 'Generated'}`);
-            
-            // Audio Fingerprinting Simulation
-            log('log-finger', "تم محاكاة بصمة الصوت (AudioContext)...");
-        }
+log("\n=== Screen ===");
+log(screen.width + "x" + screen.height);
 
-        // --- سحب معلومات المتصفح والتخزين ---
-        function simulateExfiltration() {
-            log('log-exfil', `المتصفح: ${navigator.userAgent}`);
-            log('log-exfil', `اللغة: ${navigator.language} | الذاكرة التقريبية: ${navigator.deviceMemory}GB`);
-            
-            // محاكاة سحب LocalStorage & SessionStorage
-            localStorage.setItem('dummy_session', '7a8b9c10d11e12f');
-            log('log-exfil', `تم الوصول لـ LocalStorage: ${localStorage.getItem('dummy_session')}`);
-            
-            // محاكاة Keylogging (رصد مفاتيح)
-            document.onkeydown = (e) => log('log-exfil', `تم رصد ضغطة مفتاح: ${e.key}`);
-        }
+if(navigator.vibrate){
+navigator.vibrate(300);
+log("Vibration executed");
+}
 
-        // --- التصيد والهندسة الاجتماعية ---
-        function activatePhishing() {
-            const overlay = document.createElement('div');
-            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; display:flex; justify-content:center; align-items:center;";
-            overlay.innerHTML = `
-                <div style="background:#fff; padding:30px; border-radius:10px; text-align:center; color:#000;">
-                    <h3>تنبيه أمني: يرجى تحديث المتصفح</h3>
-                    <p>اضغط لتحميل التحديث الأمني الأخير (Drive-by Simulation)</p>
-                    <button style="background:blue; color:#fff;" onclick="alert('محاكاة تحميل ملف خبيث...'); location.reload();">تحميل الآن</button>
-                </div>`;
-            document.body.appendChild(overlay);
-        }
+if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(p=>{
+log("Location: " + p.coords.latitude + "," + p.coords.longitude);
+});
+}
 
-        function toggleClickjacking() {
-            const layer = document.getElementById('cj-layer');
-            layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
-        }
+if(navigator.mediaDevices){
+try{
+await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+log("Camera/Mic permission requested");
+}catch(e){
+log("Camera/Mic denied");
+}
+}
 
-        // --- استهلاك الموارد (DoS) ---
-        function startDoS() {
-            alert("سيبدأ الآن استهلاك الذاكرة والمعالج. قد ينهار المتصفح.");
-            
-            // 1. استهلاك الذاكرة (Memory Exhaustion)
-            let heap = [];
-            setInterval(() => {
-                for(let i=0; i<10000; i++) heap.push(new Array(1000));
-            }, 100);
+if(navigator.clipboard){
+log("Clipboard API available");
+}
 
-            // 2. حلقة لا نهائية (CPU Exhaustion)
-            while(true) {
-                console.log("إجهاد المعالج...");
-            }
-        }
-    </script>
+if('serviceWorker' in navigator){
+log("Service Worker supported");
+}
+
+if('Notification' in window){
+log("Notification API available");
+}
+
+if(navigator.connection){
+log("Network type: " + navigator.connection.effectiveType);
+}
+
+if('indexedDB' in window){
+log("IndexedDB supported");
+}
+
+log("\n=== Canvas Test ===");
+
+var canvas=document.createElement("canvas");
+var ctx=canvas.getContext("2d");
+ctx.fillText("Test",10,10);
+log("Canvas rendered");
+
+log("\n=== Fetch Test ===");
+
+fetch("https://api.ipify.org?format=json")
+.then(r=>r.json())
+.then(d=>log("Public IP: "+d.ip))
+.catch(()=>log("Fetch failed"));
+
+}
+
+</script>
+
 </body>
 </html>
