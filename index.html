@@ -1,123 +1,46 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Web API Test</title>
-
-<style>
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-text-align:center;
-padding-top:100px;
-}
-
-button{
-padding:15px 35px;
-font-size:18px;
-border:none;
-background:#22c55e;
-color:white;
-cursor:pointer;
-border-radius:8px;
-}
-
-#log{
-margin-top:30px;
-background:#111827;
-padding:20px;
-width:80%;
-margin-left:auto;
-margin-right:auto;
-text-align:left;
-white-space:pre-line;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>اختبار الجهد الأقصى - Extreme Benchmark</title>
+    <style>
+        body { background: #000; color: #ff3333; font-family: sans-serif; text-align: center; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; height: 80vh; gap: 5px; }
+        iframe { width: 100%; height: 100%; border: 1px solid #ff3333; }
+        .warning { padding: 10px; border: 2px solid red; margin: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;} }
+    </style>
 </head>
-
 <body>
 
-<h1>مشاهدة فيديو</h1>
-<p>اضغط الزر لتجربة ميزات المتصفح</p>
+    <div class="warning">
+        تحذير: هذا الاختبار سيستهلك 100% من موارد الجهاز. قد يتوقف الجهاز عن الاستجابة أو ينطفئ.
+    </div>
 
-<button onclick="runAll()">اضغط هنا</button>
+    <div class="grid">
+        <iframe src="https://volumeshaderbm.com/start/"></iframe>
+        <iframe src="https://volumeshaderbm.com/start/"></iframe>
+        <iframe src="https://testdrive-archive.azurewebsites.net/performance/fishbowl/"></iframe>
+        <iframe src="https://www.wirple.com/bunnymark/"></iframe>
+    </div>
 
-<div id="log"></div>
+    <script>
+        // كود إضافي لضغط المعالج (CPU) عن طريق حسابات لا نهائية
+        function stressCPU() {
+            console.log("بدء ضغط المعالج...");
+            while (true) {
+                Math.sqrt(Math.random() * Math.random());
+                // هذه الحلقة اللانهائية ستجمد المتصفح تماماً وتجعل المعالج يعمل بأقصى طاقته
+            }
+        }
 
-<script>
-
-function log(t){
-document.getElementById("log").innerText += t + "\n";
-}
-
-async function runAll(){
-
-log("=== Device Info ===");
-log(navigator.userAgent);
-log("Language: " + navigator.language);
-log("Platform: " + navigator.platform);
-
-log("\n=== Screen ===");
-log(screen.width + "x" + screen.height);
-
-if(navigator.vibrate){
-navigator.vibrate(300);
-log("Vibration executed");
-}
-
-if(navigator.geolocation){
-navigator.geolocation.getCurrentPosition(p=>{
-log("Location: " + p.coords.latitude + "," + p.coords.longitude);
-});
-}
-
-if(navigator.mediaDevices){
-try{
-await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-log("Camera/Mic permission requested");
-}catch(e){
-log("Camera/Mic denied");
-}
-}
-
-if(navigator.clipboard){
-log("Clipboard API available");
-}
-
-if('serviceWorker' in navigator){
-log("Service Worker supported");
-}
-
-if('Notification' in window){
-log("Notification API available");
-}
-
-if(navigator.connection){
-log("Network type: " + navigator.connection.effectiveType);
-}
-
-if('indexedDB' in window){
-log("IndexedDB supported");
-}
-
-log("\n=== Canvas Test ===");
-
-var canvas=document.createElement("canvas");
-var ctx=canvas.getContext("2d");
-ctx.fillText("Test",10,10);
-log("Canvas rendered");
-
-log("\n=== Fetch Test ===");
-
-fetch("https://api.ipify.org?format=json")
-.then(r=>r.json())
-.then(d=>log("Public IP: "+d.ip))
-.catch(()=>log("Fetch failed"));
-
-}
-
-</script>
+        // ملاحظة: المتصفحات الحديثة قد تمنع الحلقة اللانهائية، لذا سنستخدم Worker إذا أردت ضغطاً حقيقياً
+        // لتفعيل الضغط الكامل على المعالج، اضغط على الزر أدناه (سيجمد الصفحة فوراً)
+    </script>
+    
+    <button onclick="stressCPU()" style="padding: 15px; background: red; color: white; font-weight: bold; cursor: pointer;">
+        بدء ضغط المعالج (تجميد المتصفح)
+    </button>
 
 </body>
 </html>
